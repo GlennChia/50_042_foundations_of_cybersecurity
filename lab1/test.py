@@ -26,8 +26,29 @@ def test_e_7():
     assert encrypt('abcdefghijk', 125) == " !\"#$%&'()*", "Test 7 shift and all exceed twice wrong"
 
 # Decrypt 
+def test_d_1():
+    assert decrypt('defghijklmn', 3) == 'abcdefghijk', "Test 1 basic shift wrong"
+
+def test_d_2():
+    assert decrypt('uvwxyz{|}~ ', 20) == 'abcdefghijk', "Test 2 basic shift boundary edge wrong"
+
+def test_d_3():
+    assert decrypt('vwxyz{|}~ !', 21) == 'abcdefghijk', "Test 3 shift and exceed boundary wrong"
+
+def test_d_4():
+    assert decrypt(" !\"#$%&'()*", 30) == "abcdefghijk", "Test 4 shift and all exceed boundary wrong"
+
+def test_d_5():
+    assert decrypt('abcdefghijk', 95) == "abcdefghijk", "Test 5 shift and all exceed and return original wrong"
+
+def test_d_6():
+    assert decrypt('efghijklmno', 99) == "abcdefghijk", "Test 6 shift and all exceed and return original wrong"
+
+def test_d_7():
+    assert decrypt(" !\"#$%&'()*", 125) == 'abcdefghijk', "Test 7 shift and all exceed twice wrong"
 
 if __name__ == "__main__":
+    print('Running encryption tests')
     test_e_1()
     test_e_2()
     test_e_3()
@@ -35,4 +56,12 @@ if __name__ == "__main__":
     test_e_5()
     test_e_6()
     test_e_7()
+    print('Running decryption tests')
+    test_d_1()
+    test_d_2()
+    test_d_3()
+    test_d_4()
+    test_d_5()
+    test_d_6()
+    test_d_7()
     print("Everything passed")
