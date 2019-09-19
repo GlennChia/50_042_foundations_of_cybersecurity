@@ -49,13 +49,16 @@ def shiftCipher(filein, fileout, key, mode):
     if mode not in valid_modes:
         raise Exception('Please enter a valid mode, you can choose d, e, D or E')
     # Validate the key that it is an integer # isinstance(<var>, int)
-    if isinstance(key, int): #str.isdigit():
+    if isinstance(key, int) or key.isdigit(): #str.isdigit():
         # if 1 < key < len(string.printable) - 1:
         #     key = key % 25
         # else:
         #     raise Exception('The key length should be between 0 and len(string.printable) - 1')
-        if key <= lowerKeyBoundary or key >= upperKeyBoundary - 1:
+        key = int(key)
+        if key < lowerKeyBoundary or key > upperKeyBoundary - 1:
             raise Exception('The key length should be between 0 and len(string.printable) - 1')
+    else:
+        raise Exception('Key should be an integer')
     with open(filein, mode="r", encoding='utf-8', newline='\n') as fin:
         text = fin.read()
         switcher = {
