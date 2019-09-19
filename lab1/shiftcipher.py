@@ -5,24 +5,15 @@ import string
 
 lowerKeyBoundary = 1
 upperKeyBoundary = len(string.printable) - 1
-lowerAsciiBoundary = 32
-upperAsciiBoundary = 126
-validAsciiCount = upperAsciiBoundary - lowerAsciiBoundary + 1
 
 def encrypt(text, key):
     encryptedString = ''
     for i in range(len(text)):
         print("this is {} out of {}".format(i, len(text) - 1))
-        # convert to Ascii (Ascii index is from 0 to 127 inclusive)
-        asciiConversion = ord(text[i])
-        # Valid range of characters is 32 (inclusive) to 126 (Inclusive)
+        asciiConversion = string.printable.index(text[i])
         tempAsciiValue = asciiConversion + int(key)
-        # Handle the case where it is out of range 
-        if tempAsciiValue > upperAsciiBoundary:
-            excessValue = tempAsciiValue - upperAsciiBoundary
-            amountToIncrement = excessValue % validAsciiCount - 1
-            tempAsciiValue = lowerAsciiBoundary + amountToIncrement
-        encryptedString += chr(tempAsciiValue)
+        tempAsciiValue = tempAsciiValue % len(string.printable)
+        encryptedString += string.printable[tempAsciiValue]
     return encryptedString
 
 
@@ -30,16 +21,10 @@ def decrypt(text, key):
     decryptedString = ''
     for i in range(len(text)):
         print("this is {} out of {}".format(i, len(text) - 1))
-        # convert to Ascii (Ascii index is from 0 to 127 inclusive)
-        asciiConversion = ord(text[i])
-        # Valid range of characters is 32 (inclusive) to 126 (Inclusive)
-        tempAsciiValue = asciiConversion - int(key)
-        # Handle the case where it is out of range 
-        if tempAsciiValue < lowerAsciiBoundary:
-            excessValue = lowerAsciiBoundary - tempAsciiValue
-            amountToDecrement = excessValue % validAsciiCount - 1
-            tempAsciiValue = upperAsciiBoundary - amountToDecrement
-        decryptedString += chr(tempAsciiValue)
+        asciiConversion = string.printable.index(text[i])
+        tempAsciiValue = asciiConversion - int(key) + len(string.printable)
+        tempAsciiValue = tempAsciiValue % len(string.printable)
+        decryptedString += string.printable[tempAsciiValue]
     return decryptedString
     
 
@@ -50,10 +35,6 @@ def shiftCipher(filein, fileout, key, mode):
         raise Exception('Please enter a valid mode, you can choose d, e, D or E')
     # Validate the key that it is an integer # isinstance(<var>, int)
     if isinstance(key, int) or key.isdigit(): #str.isdigit():
-        # if 1 < key < len(string.printable) - 1:
-        #     key = key % 25
-        # else:
-        #     raise Exception('The key length should be between 0 and len(string.printable) - 1')
         key = int(key)
         if key < lowerKeyBoundary or key > upperKeyBoundary - 1:
             raise Exception('The key length should be between 0 and len(string.printable) - 1')
@@ -71,7 +52,6 @@ def shiftCipher(filein, fileout, key, mode):
         if all(c in string.printable for c in text):
             func = switcher.get(mode, lambda: "Invalid mode")
             finalString = func(text, key)  
-            print(finalString)
     with open(fileout, mode="w", encoding='utf-8', newline='\n') as fout:
         fout.write(finalString)
     return finalString
@@ -94,5 +74,3 @@ if __name__=="__main__":
     mode = args.mode
 
     shiftCipher(filein,fileout, key, mode)
-
-    # all done
