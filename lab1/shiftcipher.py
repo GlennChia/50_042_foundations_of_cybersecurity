@@ -7,24 +7,12 @@ lowerKeyBoundary = 1
 upperKeyBoundary = len(string.printable) - 1
 
 def encrypt(text, key):
-    encryptedString = ''
-    for i in range(len(text)):
-        print("this is {} out of {}".format(i, len(text) - 1))
-        asciiConversion = string.printable.index(text[i])
-        tempAsciiValue = asciiConversion + int(key)
-        tempAsciiValue = tempAsciiValue % len(string.printable)
-        encryptedString += string.printable[tempAsciiValue]
+    encryptedString = ''.join(list(map(lambda x: string.printable[(string.printable.index(x)+int(key))%len(string.printable)], text))) 
     return encryptedString
 
 
 def decrypt(text, key):
-    decryptedString = ''
-    for i in range(len(text)):
-        print("this is {} out of {}".format(i, len(text) - 1))
-        asciiConversion = string.printable.index(text[i])
-        tempAsciiValue = asciiConversion - int(key) + len(string.printable)
-        tempAsciiValue = tempAsciiValue % len(string.printable)
-        decryptedString += string.printable[tempAsciiValue]
+    decryptedString = ''.join(list(map(lambda x: string.printable[(string.printable.index(x)-int(key)+len(string.printable))%len(string.printable)], text))) 
     return decryptedString
     
 
