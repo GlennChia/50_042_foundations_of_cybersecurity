@@ -22,10 +22,6 @@ def shiftCipher(filein,fileout, key, mode):
     key = int(key)
     # Validate the key that it is an integer # isinstance(<var>, int)
     if isinstance(key, int) or key.isdigit(): #str.isdigit():
-        # if 1 < key < len(string.printable) - 1:
-        #     key = key % 25
-        # else:
-        #     raise Exception('The key length should be between 0 and len(string.printable) - 1')
         if key < lowerKeyBoundary or key > upperKeyBoundary:
             raise Exception('The key length should be between 0 and 255')
     else:
