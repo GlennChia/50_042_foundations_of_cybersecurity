@@ -50,7 +50,9 @@ def sol2():
     challenge = conn.recvline()
     # some all zero mask.
     # TODO: find the magic mask!
-    mask = int(0).to_bytes(len(message), 'big')
+    original_message = 'Student ID 1000000 gets 0 points\n'.encode('ascii')
+    edited_message = 'Student ID 1003118 gets 4 points\n'.encode('ascii')
+    mask = XOR(original_message, edited_message)
     message = XOR(challenge, mask)
     conn.send(message)
     message = conn.recvline()
@@ -66,5 +68,5 @@ if __name__ == "__main__":
     URL = '34.239.117.115'
     PORT = 1337
 
-    sol1()
+    #sol1()
     sol2()
