@@ -345,5 +345,11 @@ echo Obtained PNG file with key $k
 xdg-open "$1".plaintext > /dev/null
 ```
 
+## 3.9 Run the script to check the file types for each of the keys
 
+We need the `./` because we are using relative path. Otherwise we need to use the absolute path
+
+```shell
+$ ./ex3.sh flag
+```
 
