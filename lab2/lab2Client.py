@@ -90,4 +90,4 @@ if __name__ == "__main__":
     PORT = 1337
 
     sol1()
-    #sol2()
+    sol2()

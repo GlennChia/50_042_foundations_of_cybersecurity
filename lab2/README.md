@@ -1290,7 +1290,11 @@ The strategy is similar to what was thought in Week 2 Lecture 1 Slide 7
 
 ![](assets/19.PNG)
 
-# 5. Miscellaneous
+# 5. Running both calls for exercise 1 and 2
+
+![](assets/20.PNG)
+
+# 6. Miscellaneous
 
 Path to the working directory
 
