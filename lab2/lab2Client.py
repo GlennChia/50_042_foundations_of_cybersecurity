@@ -1,16 +1,7 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
-# DA+Nils 2018
-# Andrei + Z.TANG + Bowen, 2019
-
 """
 Lab2: Breaking Ciphers
 
-Pwntool client for python3
-
-Install: see install.sh
-
-Documentation: https://python3-pwntools.readthedocs.io/en/latest/
+GLENN CHIA 1003118
 """
 
 from pwn import remote
@@ -30,9 +21,39 @@ def sol1():
 
     dontcare = conn.recvuntil(':')
     challenge = conn.recvline()
-    print(challenge)
+    #print(challenge)
+    # char_count = {}
+    # for i in range(len(challenge)):
+    #     if challenge[i] in char_count.keys():
+    #         char_count[challenge[i]] += 1
+    #     else:
+    #         char_count[challenge[i]] = 1
+    # print(char_count)
+    # 
+    ''' SORTING BASED ON COUNT
+    [(50, 1292), (79, 750), (46, 559), (73, 466), (99, 454), (116, 448), (12, 357), 
+    (75, 347), (124, 315), (62, 280), (69, 271), (45, 230), (59, 178), (9, 167), (32, 149), 
+    (112, 146), (70, 142), (89, 115), (95, 105), (39, 102), (101, 95), (88, 91), (87, 76), 
+    (60, 67), (86, 51), (115, 48), (51, 48), (117, 36), (118, 7), (82, 7), (123, 4), (102, 4), 
+    (10, 1)]
+    '''
+    ''' CREATNG A MAPPING BASED ON THE SORTED ARRAY ABOVE
+    {50: 1292, 79: 750, 46: 559, 73: 466, 99: 454, 116: 448, 12: 357, 75: 347, 124: 315, 62: 280, 
+    69: 271, 45: 230, 59: 178, 9: 167, 32: 149, 112: 146, 70: 142, 89: 115, 95: 105, 39: 102, 101: 95, 
+    88: 91, 87: 76, 60: 67, 86: 51, 115: 48, 51: 48, 117: 36, 118: 7, 82: 7, 123: 4, 102: 4, 10: 1 }
+    '''
+    mapping = {50: ' ', 79: 'e', 46: 't', 73: 'a', 99: 'o', 116: 'h', 12: 'r', 75: 'n',
+        124: 'd', 62: 'i', 69: 's', 45: 'l', 59: 'w', 9: '\n', 32: 'g', 112: ',',
+        70: 'u', 89: 'c', 95: 'm', 39: 'y', 101: 'f', 88: 'p', 87: '.', 60: 'b',
+        86: 'k', 115: 'v', 51: '\"', 117: "-", 118: "'", 82: 'j', 123: 'q', 102: '?', 10: 'glenn'}
+
+    solution = ''
+    for i in range(len(challenge)):
+        if challenge[i] in mapping.keys():
+           solution += mapping[challenge[i]]
     # decrypt the challenge here
-    solution = int(0).to_bytes(7408, 'big')
+    solution = solution.encode('ascii')
+    #solution = int(0).to_bytes(7408, 'big')
     conn.send(solution)
     message = conn.recvline()
     message = conn.recvline()
@@ -68,5 +89,5 @@ if __name__ == "__main__":
     URL = '34.239.117.115'
     PORT = 1337
 
-    #sol1()
-    sol2()
+    sol1()
+    #sol2()
