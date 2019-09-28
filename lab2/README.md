@@ -1284,7 +1284,57 @@ The strategy is similar to what was thought in Week 2 Lecture 1 Slide 7
 
 ## 4.2 Code
 
+### 4.2.1 Version 1: Using the strategy in 4.1
+
 ![](assets/18.PNG)
+
+### 4.2.2 Version 2: Creating the mask from byte positions
+
+- We know that the original message will be XOR the altered message. Some of the alphabets are common. For those common alphabets, the result of the XOR will be 0
+
+  ```
+  Position   0123456789
+  Original:  Student ID 1000000 gets 0 points
+  Altered:   Student ID 1003118 gets 4 points
+  After XOR: 00000000000000311800000040000000
+  ```
+
+- Hence, the positions that need to change are 14, 15, 16, 17, 24
+
+- We first create the byte variable of all zeroes with `mask = b'\x00' * 33`
+
+- We then need to convert it to a `bytearray` which allows us to change values at specific indices `marray = bytearray(mask)`
+
+```python
+def sol2():
+    conn = remote(URL, PORT)
+    message = conn.recvuntil('-Pad')  # receive TCP stream until end of menu
+    conn.sendline("2")  # select challenge 2
+
+    dontcare = conn.recvuntil(':')
+    challenge = conn.recvline()
+    print(challenge)
+    # some all zero mask.
+    # TODO: find the magic mask!
+    # original_message = 'Student ID 1000000 gets 0 points\n'.encode('ascii')
+    # edited_message = 'Student ID 1003118 gets 4 points\n'.encode('ascii')
+    mask = b'\x00' * 33
+    marray = bytearray(mask)
+    marray[14] = 3
+    marray[15] = 1
+    marray[16] = 1
+    marray[17] = 8
+    marray[24] = 4
+    message = XOR(challenge, marray)
+    conn.send(message)
+    message = conn.recvline()
+    message = conn.recvline()
+    if b'points' in message:
+        print(message)
+    conn.close()
+```
+
+
 
 ## 4.3 Results
 

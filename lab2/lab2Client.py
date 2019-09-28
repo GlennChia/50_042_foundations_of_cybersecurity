@@ -83,11 +83,38 @@ def sol2():
     conn.close()
 
 
+# def sol2():
+#     conn = remote(URL, PORT)
+#     message = conn.recvuntil('-Pad')  # receive TCP stream until end of menu
+#     conn.sendline("2")  # select challenge 2
+
+#     dontcare = conn.recvuntil(':')
+#     challenge = conn.recvline()
+#     # some all zero mask.
+#     # TODO: find the magic mask!
+#     # original_message = 'Student ID 1000000 gets 0 points\n'.encode('ascii')
+#     # edited_message = 'Student ID 1003118 gets 4 points\n'.encode('ascii')
+#     mask = b'\x00' * 33
+#     marray = bytearray(mask)
+#     marray[14] = 3
+#     marray[15] = 1
+#     marray[16] = 1
+#     marray[17] = 8
+#     marray[24] = 4
+#     message = XOR(challenge, marray)
+#     conn.send(message)
+#     message = conn.recvline()
+#     message = conn.recvline()
+#     if b'points' in message:
+#         print(message)
+#     conn.close()
+
+
 if __name__ == "__main__":
 
     # NOTE: UPPERCASE names for constants is a (nice) Python convention
     URL = '34.239.117.115'
     PORT = 1337
 
-    sol1()
+    #sol1()
     sol2()
