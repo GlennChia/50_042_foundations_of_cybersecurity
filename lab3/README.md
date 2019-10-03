@@ -223,10 +223,123 @@ rtsort .
 ## 4.5 Using rcrack
 
 ```
-rcrack ../ -l hash5.txt
+rcrack ./ -l ../hash5.txt
+```
+
+![](assets/06_rainbow_crack_win.PNG)
+
+# 5.Salting
+
+## 5.1 Creating the salted hashes
+
+### 5.1.1 Appending the random lower case letter
+
+Link:https://pynative.com/python-generate-random-string/ 
+
+- remember to use a seed so that our data can be replicated
+
+```python
+from string import ascii_lowercase
+import random
+
+random.seed(1)
+
+letters = ascii_lowercase
+indiv_values += random.choice(letters)
+```
+
+## 5.2 Creating a new rainbow table
+
+Some changes
+
+- `plaintext_len_min` and `plaintext_len_max`: These values are 6
+- The number of possible combinations are 26<sup>6</sup>=308 915 776
+- The chain length and chain number at its current amount should be sufficient 
+
+```
+rtgen md5 loweralpha-numeric 6 6 0 3800 600000 0
+```
+
+Then remember to sort
+
+```
+rtsort . 
+```
+
+This time when cracking we need to change the file path
+
+```
+rcrack ./ -l ../salted6.txt
+```
+
+Result
+
+![](assets/07_rainbow_crack_win_1.PNG)
+
+## 5.3 Adding more rainbow tables
+
+### 5.3.1 Changing the reduction function
+
+<u>**Change the reduction function to 1**</u>
+
+```
+rtgen md5 loweralpha-numeric 6 6 1 3800 600000 0
+```
+
+Result
+
+- The result improves as now there are only 3 not found
+- Notice that it says that 2 rainbow tables are being used now 
+
+![](assets/08_rainbow_crack_win_2.PNG)
+
+<u>**Create another rainbow table with reduction function as 2**</u>
+
+```
+rtgen md5 loweralpha-numeric 6 6 2 3800 600000 0
+```
+
+Result
+
+![](assets/09_rainbow_crack_win_3.PNG)
+
+### 5.3.2 Reduction table
+
+|      | 0 (10/15) | 1 (8/15) | 2 (6/15) | 3 (9/15) | 4 (5/15) | 5 (10/15) | 6 (11/15) |
+| ---- | --------- | -------- | -------- | -------- | -------- | --------- | --------- |
+| 1    | Y         |          |          |          |          | Y         | Y         |
+| 2    | Y         | Y        | Y        | Y        |          | Y         |           |
+| 3    | Y         | Y        |          | Y        |          | Y         | Y         |
+| 4    | Y         |          | Y        | Y        | Y        | Y         | Y         |
+| 5    | Y         | Y        |          |          | Y        |           | Y         |
+| 6    | Y         | Y        | Y        | Y        |          | Y         | Y         |
+| 7    | Y         |          |          |          |          |           | Y         |
+| 8    |           |          | Y        |          |          | Y         |           |
+| 9    | Y         | Y        |          |          | Y        | Y         | Y         |
+| 10   | Y         | Y        | Y        | Y        |          | Y         | Y         |
+| 11   |           | Y        |          | Y        |          |           | Y         |
+| 12   |           | Y        |          | Y        |          | Y         |           |
+| 13   |           |          |          |          | Y        |           |           |
+| 14   | Y         |          | Y        | Y        | Y        |           | Y         |
+| 15   |           |          |          | Y        |          | Y         | Y         |
+
+## 5.4 Getting the result
+
+- In the end, I used reduction functions 4, 5, 6 to get the final answer
+
+For the full generation
+
+```
+rtgen md5 loweralpha-numeric 6 6 4 3800 600000 0
+rtgen md5 loweralpha-numeric 6 6 5 3800 600000 0
+rtgen md5 loweralpha-numeric 6 6 6 3800 600000 0
+rtsort . 
+rcrack ./ -l ../salted6.txt
 ```
 
 
+
+![](assets/10_rainbow_crack_win_final.PNG)
 
 
 
