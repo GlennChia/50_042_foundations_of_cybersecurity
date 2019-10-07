@@ -504,11 +504,11 @@ Result: 25%
 
 ```
 
-## 6.2  Iteration 2
+## 6.2  Iteration 2 - Using online sources
 
-Making a Get request
+<u>**Making a Get request**</u>
 
-Link 1: https://md5decrypt.net/en/Api/
+Link 1: https://www.nitrxgen.net/
 
 Result: 142/148
 
@@ -530,6 +530,38 @@ Unidentified hashes
 - 4698e7ab9c06649f06f3bbc8fcb20360
 - daac6467d1d7cb418572dbd8d01c190a
 - d768d3b271ba9faaab0141600a47b221F
+
+```python
+for indiv_hash in hash_ls:
+        print(indiv_hash)
+        try:
+            url = "http://www.nitrxgen.net/md5db/{}.json".format(indiv_hash)
+            headers = {
+                'Accept': "*/*",
+                'Cache-Control': "no-cache",
+                'Host': "www.nitrxgen.net",
+                'Accept-Encoding': "gzip, deflate",
+                'Connection': "keep-alive",
+                'cache-control': "no-cache"
+            }
+            response = requests.request("GET", url, headers=headers)
+            response_json = json.loads(response.text)
+            decrypted_hash = response_json['result']['pass']
+            if decrypted_hash != '':
+                answer_ls.append(decrypted_hash)
+                success += 1
+            else:
+                try:
+                    decrypted_hash = data[indiv_hash]
+                    answer_ls.append(decrypted_hash)
+                    success += 1
+                except:
+                    answer_ls.append('error')
+        except:
+            answer_ls.append('error')
+```
+
+
 
 # Miscellaneous
 

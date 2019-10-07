@@ -24,6 +24,7 @@ def break_hash():
                 test_cases += 1
     # Read my own JSON mapper
     # Online tools used: https://hashkiller.co.uk/Cracker/MD5
+    # Online tools used: https://www.nitrxgen.net/md5db/<hash_here>.json
     with open('glenn_mapping.json') as json_file:
         data = json.load(json_file)
     # Look for the decrypted values and add them to a list
