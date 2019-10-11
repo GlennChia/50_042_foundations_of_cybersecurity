@@ -32,10 +32,10 @@ def ror(val, r_bits, max_bits): return \
 
 
 def genRoundKeys(key):
-    # roundkeys = []
-    roundkeys = [32]
+    # roundKeys = []
+    roundKeys = [32]
     for i in range(1,FULLROUND+2): # (K1 ... K32)
-        roundkeys.append(key >> 16)
+        roundKeys.append(key >> 16)
         # Perform the shift. [k79k78 . . . k1k0] = [k18k17 . . . k20k19]
         # Part 1 is to get the first 19 bits and then shift it to the left. 
         # Part 2 is to make bit 19 first bit
@@ -45,7 +45,7 @@ def genRoundKeys(key):
         # [k19k18k17k16k15] = [k19k18k17k16k15] ⊕ round_counter
         # round_counter varies from 1(00001) to 32 (100000) but at 32 it doesn't flow back to affect anything
         key = key ^ (i << 15)
-    return roundkeys
+    return roundKeys
 
 
 def addRoundKey(state, Ki):
@@ -75,6 +75,9 @@ def pLayer(state):
 
 def present_round(state, roundKey):
     # Call addRoundKey, sBoxLayer and then pLayer
+    state = addRoundKey(state, roundKey)
+    state = sBoxLayer(state)
+    state = pLayer(state)
     return state
 
 
