@@ -43,7 +43,7 @@ k79 k78 k77 ... k3 k2 k1 k0
 
 # 3. Implementing present
 
-Function 1: addRoundKey
+## 3.1 Function 1: addRoundKey
 
 - For this it XORs the key and the state 
 
@@ -53,7 +53,7 @@ def addRoundKey(state, Ki):
     return state
 ```
 
-Function 2: sBox Layer
+## 3.2 Function 2: sBox Layer
 
 - Input: 64 bit input
 - Output: 64 bit output after the substitution
@@ -85,11 +85,61 @@ def sBoxLayer(state):
     return output
 ```
 
-Function 3
+## 3.3 Function 3: pLayer
 
+- Input: 64 bits
+- Output: 64 bits
+- Essentially it is a substitution. Based on the current position, we shift the location of that bit to another location based on a table
+- We will need a mask of `0x01` so that we can do an `&` operation and isolate a single bit such that we can then shift it to its correct location
+- I will illustrate this with a 16 bit example for the first 2 iterations. The 20 bit example is 1110 1001 0010 0101 1110
+  - The first index is index 0
+    - We shift the state by the index which is 0. Hence, the state is preserved. 
+    - We then perform an `&` operation with `0x01` which makes the state `0000 0000 0000 0000 0000`
+    - According to the mapping, the first bit will stay at its position. Hence it does not shift
+    - We take this and XOR with the output (Output starts at 0).
+    - Hence, the output is `0000 0000 0000 0000 0000`
+  - The second index is index 1
+    - We shift the state by the index which is 1. Hence we get `0111 0100 1001 0010 1111`
+    - We then perform an `&` operation with `0x01` which makes the state `0000 0000 0000 0000 0001`
+    - According to the mapping, the first index is mapped to the 16th index (index starts from 0). Hence, after the shift of 16 bits we have  `0001 0000 0000 0000 0000`
+    - We take this and XOR with the output 
+    - Hence, the output is now `0001 0000 0000 0000 0000`
 
+```python
+def pLayer(state):
+    # use the pmt array for the mapping
+    output = 0
+    for i in range(64):
+        shifted_value = ((state >> i) & 0x01) << pmt[i]
+        output = output | shifted_value
+    return output
+```
 
-Function 4
+## 3.4 Function 4: Generate the round keys (To be used in all rounds later)
+
+The formula is given in the paper.
+
+```python
+def genRoundKeys(key):
+    # roundKeys = []
+    roundKeys = [32]
+    for i in range(1,FULLROUND+2): # (K1 ... K32)
+        roundKeys.append(key >> 16)
+        # Perform the shift. [k79k78 . . . k1k0] = [k18k17 . . . k20k19]
+        # Part 1 is to get the first 19 bits and then shift it to the left. 
+        # Part 2 is to make bit 19 first bit
+        key = ((key & (2**19-1)) << 61) | (key >> 19)
+        # [k79k78k77k76] = S[k79k78k77k76]
+        key = (sbox[key >> 76] << 76) | (key & (2**76-1))
+        # [k19k18k17k16k15] = [k19k18k17k16k15] ⊕ round_counter
+        # round_counter varies from 1(00001) to 32 (100000) but at 32 it doesn't flow back to affect anything
+        key = key ^ (i << 15)
+    return roundKeys
+```
+
+## 3.4 Decryption
+
+Basically just reversing the steps
 
 
 

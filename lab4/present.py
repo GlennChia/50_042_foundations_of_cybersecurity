@@ -81,7 +81,28 @@ def present_round(state, roundKey):
     return state
 
 
+def sBoxLayer_decrypt(state):
+    mask = 0xf
+    output = 0
+    for i in range(16):
+        sboxOut = sbox.index(state & mask)
+        output = output | (sboxOut<<(i*4))
+        state = state >> 4
+    return output
+
+
+def pLayer_decrypt(state):
+    output = 0
+    for i in range(64):
+        shifted_value = ((state >> i) & 0x01) << pmt.index(i)
+        output = output | shifted_value
+    return output
+
+
 def present_inv_round(state, roundKey):
+    state = pLayer_decrypt(state)
+    state = sBoxLayer_decrypt(state)
+    state = addRoundKey(state, roundKey)
     return state
 
 
