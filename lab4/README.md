@@ -179,13 +179,13 @@ display Tux.ppm
 Encryption
 
 ```bash
-python ecb.py -i Tux.ppm -o qn3 -k 0 -m e
+python ecb.py -i Tux.ppm -o qn4 -k 0 -m e
 ```
 
 Decryption
 
 ```bash
-python ecb.py -i qn3 -o Tux_d.ppm -k 0 -m d
+python ecb.py -i qn4 -o Tux_d.ppm -k 0 -m d
 ```
 
 ## 4.3 Understanding the input
@@ -242,5 +242,87 @@ The simplest way is to to use an `&` with a 64 bit `1`. This ensures that `1`s f
 fout.write((byte & (2**64-1)).to_bytes(8, byteorder='big'))
 ```
 
+## 4.6 Result
+
+![](assets/01.PNG)
 
 
+
+# 5. Extraction
+
+Run the code with `python extract.py -i letter.e -o qn5.pbm -hh header.pbm`
+
+## 5.1 Understanding the problem
+
+- We are given that there are only 2 values, black or white
+- Hence, we can guess and check either. 
+- We use a dictionary to store the keys and their frequency. We assume that their values (frequencies) are different and then do the guess and check. If the values are the same, we sort the dictionary
+- We read in the file in 8 bytes. 
+  - Iteration 1 (highest frequency will be a 1):
+    - Pattern A: White
+    - Pattern B: Black
+  - Iteration 2 (Just to flip the color scheme): 
+    - Pattern A: Black
+    - Pattern B: White
+- Note that we have to ignore the header file (Given to us)
+
+## 5.2 Getting details about the header file
+
+- We read in all the bytes of the header 
+
+```python
+def getInfo(headerfile):
+    with open(headerfile, 'br') as fheader:
+        header_bytes = fheader.read()
+    return header_bytes
+```
+
+- Later we will skip it by using its length. We add a 1 later because we want to account for the `return`
+
+```python
+header = fin.read(header_length + 1)
+```
+
+## 5.3 Iteration 1: Highest frequency is a 1
+
+```python
+for k, v in bit_mapper.items():
+        if v > frequency:
+            key_highest_freq = k
+            frequency = v
+    with open(outfile, 'w') as fout: 
+        # Write the header first 
+        fout.write(header + '\n')
+        for encrypted in output:
+            if encrypted == key_highest_freq:
+                fout.write('1' * 8)
+            else:
+                fout.write('0' *8 )
+```
+
+Result
+
+![](assets/02.PNG)
+
+
+
+## 5.4 Iteration 2: Highest frequency is a 0
+
+```python
+for k, v in bit_mapper.items():
+        if v > frequency:
+            key_highest_freq = k
+            frequency = v
+    with open(outfile, 'w') as fout: 
+        # Write the header first 
+        fout.write(header + '\n')
+        for encrypted in output:
+            if encrypted == key_highest_freq:
+                fout.write('0' * 8)
+            else:
+                fout.write('1' *8 )
+```
+
+Result
+
+![](assets/03.PNG)
