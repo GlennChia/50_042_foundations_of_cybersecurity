@@ -30,6 +30,17 @@ x >> y
 
 2**76-1 = Basically something that has 76 1s
 
+## 1.4 Converting bytes to integer
+
+Link: https://docs.python.org/3/library/stdtypes.html
+
+```python
+int.from_bytes(b'\x00\x10', byteorder='big')
+# 16
+```
+
+- The *byteorder* argument determines the byte order used to represent the integer. If *byteorder* is `"big"`, the most significant byte is at the beginning of the byte array.
+
 # 2. Understanding bits and their index
 
 - Leftmost bit is k79
@@ -140,6 +151,96 @@ def genRoundKeys(key):
 ## 3.4 Decryption
 
 Basically just reversing the steps
+
+# 4. Implementing ECB
+
+## 4.1 Displaying the image from the command line
+
+Changing directory into the one with the code
+
+```bash
+/mnt/c/Users/Glenn/Desktop/Github/50_042_foundations_of_cybersecurity/lab4
+```
+
+Install ImageMagick
+
+```bash
+sudo apt-get install imagemagick
+```
+
+Displaying the image
+
+```bash
+display Tux.ppm
+```
+
+## 4.2 Running the ECB
+
+Encryption
+
+```bash
+python ecb.py -i Tux.ppm -o qn3 -k 0 -m e
+```
+
+Decryption
+
+```bash
+python ecb.py -i qn3 -o Tux_d.ppm -k 0 -m d
+```
+
+## 4.3 Understanding the input
+
+When I read in the Tux.ppm, I get
+
+```
+\n245 189 12 245 189 12 245 189 12 245 189 12 245 189 12 245 189 12 242 182 12 \n245 189 12 245 189 12 245 189 12 245 189 12 235 196 12 243 205 12 235 196 12 \n225 180 10 207 148 7 136 95 7 10 6 4 2 2 4 2 2 4 2 2 4 2 2 4 2 2 4 2 2 4 2 2 4 \n2
+```
+
+The range is from 0 to 255. 255 in bits is 1111 1111 (8bits)
+
+present takes in 64 bit blocks and encrypts them. Hence, we need to find a way to read the stream 64 bits at a time
+
+## 4.4 Reading in 64 bits/8bytes at a time
+
+There is no way where we can read in 64 bits at a time. Instead, Python has a nice way of reading in 8 bytes at a time 
+
+Link: https://stackoverflow.com/questions/1035340/reading-binary-file-and-looping-over-each-byte
+
+```python
+with open("myfile", "rb") as f:
+    byte = f.read(1)
+    while byte:
+        # Do stuff with byte.
+        byte = f.read(1)
+'''
+Alternatively
+'''
+with open("myfile", "rb") as f:
+    byte = f.read(1)
+    while byte != b"":
+        # Do stuff with byte.
+        byte = f.read(1)
+```
+
+My fear is that it misses the first byte. Hence, I tweak it a little
+
+```python
+with open("myfile", "rb") as f:
+    finished = False
+    while not finished:
+        # Do stuff with byte.
+        byte = f.read(1)
+        if byte == b"":
+            finished = True
+```
+
+## 4.5 Adding the padding
+
+The simplest way is to to use an `&` with a 64 bit `1`. This ensures that `1`s from the original will remain as well as `0`. If the number of bits is less than that, it will be padded with `1`s
+
+```python
+fout.write((byte & (2**64-1)).to_bytes(8, byteorder='big'))
+```
 
 
 
