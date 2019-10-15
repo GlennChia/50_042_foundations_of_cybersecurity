@@ -107,13 +107,13 @@ def sBoxLayer(state):
     - We shift the state by the index which is 0. Hence, the state is preserved. 
     - We then perform an `&` operation with `0x01` which makes the state `0000 0000 0000 0000 0000`
     - According to the mapping, the first bit will stay at its position. Hence it does not shift
-    - We take this and XOR with the output (Output starts at 0).
+    - We take this and OR with the output (Output starts at 0).
     - Hence, the output is `0000 0000 0000 0000 0000`
   - The second index is index 1
     - We shift the state by the index which is 1. Hence we get `0111 0100 1001 0010 1111`
     - We then perform an `&` operation with `0x01` which makes the state `0000 0000 0000 0000 0001`
     - According to the mapping, the first index is mapped to the 16th index (index starts from 0). Hence, after the shift of 16 bits we have  `0001 0000 0000 0000 0000`
-    - We take this and XOR with the output 
+    - We take this and OR with the output 
     - Hence, the output is now `0001 0000 0000 0000 0000`
 
 ```python
