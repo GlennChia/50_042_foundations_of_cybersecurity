@@ -80,10 +80,10 @@ def addRoundKey(state, Ki):
     - We append this to the output with an OR operation. `0000 0000 | 0000 1110` which gives `0000 1110`
     - Then shift the state by 4 bits to the right to prepare for the next step so we get `0000 1011`
   - The second index is 1
-    - Now we use the mask on the whole input which is `0000 1110 & 0000 1111` which produces `0000 1110` which is essentially the new first 4 LSB
-    - We pass this into the SBOX to make the substitution. 1110 is 14 and we map it to the SBOX which produces 0x1 which is 0001
-    - We then need to shift it left by i*4 which is 1 so we shift each bit by 4 to the left for now so we have `0001 0000` 
-    - We append this to the output with an OR operation. `0001 0000 | 0000 1110` which gives `0001 1110` which does not interfere with our first operation on index 0
+    - Now we use the mask on the whole input which is `0000 1011 & 0000 1111` which produces `0000 1011 ` which is essentially the new first 4 LSB
+    - We pass this into the SBOX to make the substitution. 1011 is 11 and we map it to the SBOX which produces 0x8 which is 1000
+    - We then need to shift it left by i*4 which is 1 so we shift each bit by 4 to the left for now so we have `1000 0000` 
+    - We append this to the output with an OR operation. `1000 0000 | 0000 1110` which gives `1000 1110` which does not interfere with our first operation on index 0
 
 ```python
 def sBoxLayer(state):
