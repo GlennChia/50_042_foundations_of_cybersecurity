@@ -4,13 +4,40 @@
 import copy
 class Polynomial2:
     def __init__(self,coeffs):
-        pass
+        self._coeffs = coeffs
 
     def add(self,p2):
-        pass
+        add_result = []
+        # Extend the shorter array
+        len_p1 = len(self._coeffs)
+        len_p2 = len(p2._coeffs)
+        difference_length = abs(len_p1 - len_p2)
+        if len_p1 > len_p2:
+            for zero_counter in range(difference_length):
+                p2._coeffs.append(0)
+        else:
+            for zero_counter in range(difference_length):
+                self._coeffs.append(0)
+        for index, indiv_bit in enumerate(self._coeffs):
+            add_result.append(p2._coeffs[index] ^ indiv_bit)
+        return(Polynomial2(add_result))
+
 
     def sub(self,p2):
-        pass
+        add_result = []
+        # Extend the shorter array
+        len_p1 = len(self._coeffs)
+        len_p2 = len(p2._coeffs)
+        difference_length = abs(len_p1 - len_p2)
+        if len_p1 > len_p2:
+            for zero_counter in range(difference_length):
+                p2._coeffs.append(0)
+        else:
+            for zero_counter in range(difference_length):
+                self._coeffs.append(0)
+        for index, indiv_bit in enumerate(self._coeffs):
+            add_result.append(p2._coeffs[index] ^ indiv_bit)
+        return(Polynomial2(add_result))
 
     def mul(self,p2,modp=None):
         pass
@@ -20,10 +47,23 @@ class Polynomial2:
         return q, r
 
     def __str__(self):
-        pass
+        formatted_polynomial = ''
+        temporary_coeffs = self._coeffs
+        temporary_coeffs.reverse()
+        for index_coeff, indiv_coeff in enumerate(temporary_coeffs):
+            if index_coeff == len(temporary_coeffs) - 1:
+                if indiv_coeff == 1:
+                    formatted_polynomial += 'x^{}'.format(0)
+            else:
+                if indiv_coeff == 1:
+                    formatted_polynomial += 'x^{}+'.format(len(temporary_coeffs) - 1 - index_coeff)
+        return formatted_polynomial
 
     def getInt(p):
-        pass
+        value = 0
+        for index_coeff, indiv_coeff in enumerate(p):
+            value += indiv_coeff * 2 ** index_coeff
+        return value
 
 
 class GF2N:
