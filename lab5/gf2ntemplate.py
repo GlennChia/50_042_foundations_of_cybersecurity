@@ -40,7 +40,68 @@ class Polynomial2:
         return(Polynomial2(add_result))
 
     def mul(self,p2,modp=None):
-        pass
+        if modp:
+            reduction_limit = len(modp._coeffs)
+            p2_clone = p2._coeffs
+            storage = []
+            # For loop through the reference which will be self
+            for iterations in range(len(self._coeffs)):
+                state = self._coeffs[iterations]
+                if iterations == 0:
+                    zero_array = p2_clone
+                else:
+                    try:
+                        if p2_clone[-1] == 0:
+                            zero_array = [0]
+                            zero_array.extend(p2_clone)
+                            del zero_array[-1]
+                        else:
+                            zero_array = [0]
+                            zero_array.extend(p2_clone)
+                            del zero_array[-1]
+                            add_result = []
+                            for index, indiv_bit in enumerate(zero_array):
+                                add_result.append(modp._coeffs[index] ^ indiv_bit)
+                            zero_array = add_result
+                    except:
+                        # Just shift
+                        zero_array = [0]
+                        zero_array.extend(p2_clone)
+                p2_clone = zero_array
+                if state == 1:
+                    storage.append(zero_array)
+            # Add the partial results
+            mult_result = [0 for i in range(reduction_limit - 1)]
+            for operables in storage:
+                for index_final, value_final in enumerate(mult_result):
+                    try:
+                        mult_result[index_final] = value_final ^ operables[index_final]
+                    except:
+                        pass
+        else:
+            # Standard polynomial
+            p2_clone = p2._coeffs
+            storage = []
+            # For loop through the reference which will be self
+            for iterations in range(len(self._coeffs)):
+                state = self._coeffs[iterations]
+                if iterations == 0:
+                    zero_array = p2_clone
+                else:
+                    zero_array = [0]
+                    zero_array.extend(p2_clone)
+                p2_clone = zero_array
+                if state == 1:
+                    storage.append(zero_array)
+            # Add the partial results
+            mult_result = [0 for i in range(reduction_limit - 1)]
+            for operables in storage:
+                for index_final, value_final in enumerate(mult_result):
+                    try:
+                        mult_result[index_final] = value_final ^ operables[index_final]
+                    except:
+                        pass
+        return Polynomial2(mult_result)
 
     def div(self,p2):
         pass
