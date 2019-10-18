@@ -2,6 +2,22 @@
 # Year 2019
 
 import copy
+
+# Helper methods
+def deg(coefficients):
+    for index_coefficient, coefficient in enumerate(coefficients):
+        if coefficient == 1:
+            index_coeff = index_coefficient
+    return index_coeff
+
+
+def lc(coefficients):
+    for index_coefficient, coefficient in enumerate(coefficients):
+        if coefficient == 1:
+            leading_coefficient = coefficient
+    return leading_coefficient
+
+
 class Polynomial2:
     def __init__(self,coeffs):
         self._coeffs = coeffs
@@ -80,6 +96,7 @@ class Polynomial2:
                         pass
         else:
             # Standard polynomial
+            reduction_limit = len(self._coeffs) + len(p2._coeffs)
             p2_clone = p2._coeffs
             storage = []
             # For loop through the reference which will be self
@@ -104,12 +121,32 @@ class Polynomial2:
         return Polynomial2(mult_result)
 
     def div(self,p2):
-        pass
+        # Create q based on the highest power of the quotient
+        q = Polynomial2([])
+        for i in range(len(self._coeffs) - len(p2._coeffs) + 1):
+            q._coeffs.append(0)
+        r = self._coeffs
+        b = p2._coeffs
+        d = deg(b)
+        c = lc(p2._coeffs)
+        while deg(r) >= d:
+            power = deg(r) - d
+            coeff_power = int(lc(r) / c)
+            s = []
+            for i in range(power):
+                s.append(0)
+            s.append(coeff_power)
+            q = Polynomial2(s).add(q)
+            #q = q._coeffs
+            sb = Polynomial2(s).mul(Polynomial2(b))
+            r = Polynomial2(r).sub(sb)
+            r = r._coeffs
+        r = Polynomial2(r)
         return q, r
 
     def __str__(self):
         formatted_polynomial = ''
-        temporary_coeffs = self._coeffs
+        temporary_coeffs = copy.deepcopy(self._coeffs)
         temporary_coeffs.reverse()
         for index_coeff, indiv_coeff in enumerate(temporary_coeffs):
             if index_coeff == len(temporary_coeffs) - 1:
