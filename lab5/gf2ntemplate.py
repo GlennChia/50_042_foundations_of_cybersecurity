@@ -3,24 +3,11 @@
 
 import copy
 
-# Helper methods
-def deg(coefficients):
-    for index_coefficient, coefficient in enumerate(coefficients):
-        if coefficient == 1:
-            index_coeff = index_coefficient
-    return index_coeff
-
-
-def lc(coefficients):
-    for index_coefficient, coefficient in enumerate(coefficients):
-        if coefficient == 1:
-            leading_coefficient = coefficient
-    return leading_coefficient
-
 
 class Polynomial2:
     def __init__(self,coeffs):
         self._coeffs = coeffs
+
 
     def add(self,p2):
         add_result = []
@@ -54,6 +41,7 @@ class Polynomial2:
         for index, indiv_bit in enumerate(self._coeffs):
             add_result.append(p2._coeffs[index] ^ indiv_bit)
         return(Polynomial2(add_result))
+
 
     def mul(self,p2,modp=None):
         if modp:
@@ -120,28 +108,41 @@ class Polynomial2:
                         pass
         return Polynomial2(mult_result)
 
+
+    # Helper methods
+    def deg(self):
+        for index_coefficient, coefficient in enumerate(self._coeffs):
+            if coefficient == 1:
+                index_coeff = index_coefficient
+        return index_coeff
+
+
+    def lc(self):
+        for index_coefficient, coefficient in enumerate(self._coeffs):
+            if coefficient == 1:
+                leading_coefficient = coefficient
+        return leading_coefficient
+
+
     def div(self,p2):
         # Create q based on the highest power of the quotient
         q = Polynomial2([])
         for i in range(len(self._coeffs) - len(p2._coeffs) + 1):
             q._coeffs.append(0)
-        r = self._coeffs
-        b = p2._coeffs
-        d = deg(b)
-        c = lc(p2._coeffs)
-        while deg(r) >= d:
-            power = deg(r) - d
-            coeff_power = int(lc(r) / c)
+        r = copy.deepcopy(self)
+        b = p2
+        d = b.deg()
+        c = b.lc()
+        while r.deg() >= d:
+            power = r.deg() - d
+            coeff_power = int(r.lc()/ c)
             s = []
             for i in range(power):
                 s.append(0)
             s.append(coeff_power)
             q = Polynomial2(s).add(q)
-            #q = q._coeffs
-            sb = Polynomial2(s).mul(Polynomial2(b))
-            r = Polynomial2(r).sub(sb)
-            r = r._coeffs
-        r = Polynomial2(r)
+            sb = Polynomial2(s).mul(b)
+            r = r.sub(sb)
         return q, r
 
     def __str__(self):
@@ -159,9 +160,9 @@ class Polynomial2:
                     formatted_polynomial += 'x^{}+'.format(len(temporary_coeffs) - 1 - index_coeff)
         return formatted_polynomial
 
-    def getInt(p):
+    def getInt(self):
         value = 0
-        for index_coeff, indiv_coeff in enumerate(p):
+        for index_coeff, indiv_coeff in enumerate(self._coeffs):
             value += indiv_coeff * 2 ** index_coeff
         return value
 
