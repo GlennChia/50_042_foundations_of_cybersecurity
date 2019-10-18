@@ -90,9 +90,13 @@ I could not get it to work initially because I was returning the result as `retu
 
 Instead, I need to return an Object which will be captured by the test case and then printed. Previously I returned an array and when we print it, it just printed an array.
 
-Line 7 is the issue and we change it to the commented code 
+Line 9 is the issue and we change it to the commented code 
+
+To format the way that the lab wants, it is convenient to reverse the list. However, we have to `deepcopy` it to prevent errors.
 
 ```python
+import copy
+
 class Polynomial2:
     def __init__(self,coeffs):
         self._coeffs = coeffs
@@ -103,7 +107,7 @@ class Polynomial2:
     
     def __str__(self):
         formatted_polynomial = ''
-        temporary_coeffs = self._coeffs
+        temporary_coeffs = copy.deepcopy(self._coeffs)
         temporary_coeffs.reverse()
         for index_coeff, indiv_coeff in enumerate(temporary_coeffs):
             if index_coeff == len(temporary_coeffs) - 1:
