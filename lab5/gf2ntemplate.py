@@ -115,6 +115,8 @@ class Polynomial2:
             if index_coeff == len(temporary_coeffs) - 1:
                 if indiv_coeff == 1:
                     formatted_polynomial += 'x^{}'.format(0)
+                else:
+                    formatted_polynomial = formatted_polynomial[: -1]
             else:
                 if indiv_coeff == 1:
                     formatted_polynomial += 'x^{}+'.format(len(temporary_coeffs) - 1 - index_coeff)
