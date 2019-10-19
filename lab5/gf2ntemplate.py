@@ -1,3 +1,6 @@
+# ======
+# GLENN CHIA 1003118
+# ======
 # 50.042 FCS Lab 5 Modular Arithmetics
 # Year 2019
 
@@ -366,27 +369,13 @@ class GF2N:
     def getPolynomial2List(self):
         coeffs = list(str(bin(self.x)).lstrip('0b'))
         coeffs = [ int(x) for x in coeffs ]
-        #print(coeffs)
         coeffs.reverse()
         return coeffs
 
         
     def __str__(self):
         return str(self.x)
-        # # Print based on an integer representation
-        # coeffs = self.getPolynomial2List()
-        # formatted_polynomial = ''
-        # coeffs.reverse()
-        # for index_coeff, indiv_coeff in enumerate(coeffs):
-        #     if index_coeff == len(coeffs) - 1:
-        #         if indiv_coeff == 1:
-        #             formatted_polynomial += 'x^{}'.format(0)
-        #         else:
-        #             formatted_polynomial = formatted_polynomial[: -1]
-        #     else:
-        #         if indiv_coeff == 1:
-        #             formatted_polynomial += 'x^{}+'.format(len(coeffs) - 1 - index_coeff)
-        # return formatted_polynomial
+
 
     def getInt(self, coefficients):
         value = 0
