@@ -47,6 +47,9 @@ class Polynomial2:
         if modp:
             reduction_limit = len(modp._coeffs)
             p2_clone = p2._coeffs
+            to_append = reduction_limit - len(p2_clone) - 1
+            for i in range(to_append):
+                p2_clone.append(0)
             storage = []
             # For loop through the reference which will be self
             for iterations in range(len(self._coeffs)):
@@ -178,28 +181,218 @@ class GF2N:
                [0,0,0,1,1,1,1,1]]
 
     def __init__(self,x,n=8,ip=Polynomial2([1,1,0,1,1,0,0,0,1])):
-        pass
+        self.x =x
+        self.n = n
+        self.ip = ip
+        self.p = self.getPolynomial2()
 
 
     def add(self,g2):
-        pass
+        add_result = []
+        # Extend the shorter array
+        self_coeffs = self.getPolynomial2List()
+        g2_coeffs = g2.getPolynomial2List()
+        len_g1 = len(self_coeffs)
+        len_g2 = len(g2_coeffs)
+        difference_length = abs(len_g1 - len_g2)
+        if len_g1 > len_g2:
+            for zero_counter in range(difference_length):
+                g2_coeffs.append(0)
+        else:
+            for zero_counter in range(difference_length):
+                self_coeffs.append(0)
+        for index, indiv_bit in enumerate(self_coeffs):
+            add_result.append(g2_coeffs[index] ^ indiv_bit)
+        # Then do a XOR with the ip
+        final_result = []
+        if self.ip and len(self.ip._coeffs) <= len(add_result):
+            for index, indiv_bit in enumerate(self.ip._coeffs):
+                final_result.append(indiv_bit ^ add_result[index])
+        else:
+            final_result = add_result
+        # convert to an integer so that we can return a g3 object
+        value = self.getInt(final_result)
+        #print(value)
+        return GF2N(value, self.n, self.ip)
+
+
     def sub(self,g2):
-        pass
+        sub_result = []
+        # Extend the shorter array
+        self_coeffs = self.getPolynomial2List()
+        g2_coeffs = g2.getPolynomial2List()
+        len_g1 = len(self_coeffs)
+        len_g2 = len(g2_coeffs)
+        difference_length = abs(len_g1 - len_g2)
+        if len_g1 > len_g2:
+            for zero_counter in range(difference_length):
+                g2_coeffs.append(0)
+        else:
+            for zero_counter in range(difference_length):
+                self_coeffs.append(0)
+        for index, indiv_bit in enumerate(self_coeffs):
+            sub_result.append(g2_coeffs[index] ^ indiv_bit)
+        # Then do a XOR with the ip'
+        final_result = []
+        if self.ip and len(self.ip._coeffs) <= len(sub_result):
+            for index, indiv_bit in enumerate(self.ip._coeffs):
+                final_result.append(indiv_bit ^ sub_result[index])
+        else:
+            final_result = sub_result
+        # convert to an integer so that we can return a g3 object
+        value = self.getInt(final_result)
+        return GF2N(value, self.n, self.ip)
     
+
     def mul(self,g2):
-        pass
+        self_coeffs = self.getPolynomial2List()
+        g2_coeffs = g2.getPolynomial2List()
+        if self.ip or g2.ip:
+            try:
+                modp = self.ip
+            except:
+                modp = g2.ip
+            reduction_limit = len(modp._coeffs)
+            to_append = reduction_limit - len(self_coeffs) - 1
+            for i in range(to_append):
+                self_coeffs.append(0)
+            storage = []
+            # For loop through the reference which will be self
+            for iterations in range(len(g2_coeffs)):
+                state = g2_coeffs[iterations]
+                if iterations == 0:
+                    # g2_coeffs multiplied by x^0
+                    zero_array = self_coeffs
+                else:
+                    try:
+                        if self_coeffs[-1] == 0:
+                            zero_array = [0]
+                            zero_array.extend(self_coeffs)
+                            del zero_array[-1]
+                        else:
+                            zero_array = [0]
+                            zero_array.extend(self_coeffs)
+                            del zero_array[-1]
+                            add_result = []
+                            for index, indiv_bit in enumerate(zero_array):
+                                add_result.append(modp._coeffs[index] ^ indiv_bit)
+                            zero_array = add_result
+                    except:
+                        # Just shift
+                        zero_array = [0]
+                        zero_array.extend(self_coeffs)
+                self_coeffs = zero_array
+                if state == 1:
+                    storage.append(zero_array)
+            # Add the partial results
+            mult_result = [0 for i in range(reduction_limit - 1)]
+        else:
+            # Standard polynomial
+            reduction_limit = len(self_coeffs) + len(g2_coeffs)
+            storage = []
+            # For loop through the reference which will be self
+            for iterations in range(len(g2_coeffs)):
+                state = g2_coeffs[iterations]
+                if iterations == 0:
+                    zero_array = self_coeffs
+                else:
+                    zero_array = [0]
+                    zero_array.extend(self_coeffs)
+                self_coeffs = zero_array
+                if state == 1:
+                    storage.append(zero_array)
+            # Add the partial results
+            mult_result = [0 for i in range(reduction_limit - 1)]
+        for operables in storage:
+            for index_final, value_final in enumerate(mult_result):
+                try:
+                    mult_result[index_final] = value_final ^ operables[index_final]
+                except:
+                    pass
+        value = self.getInt(mult_result)
+        return GF2N(value, self.n, self.ip)
+
+
+    def deg(self):
+        # Convert integer to list
+        self_coeffs = self.getPolynomial2List()
+        for index_coefficient, coefficient in enumerate(self_coeffs):
+            if coefficient == 1:
+                index_coeff = index_coefficient
+        return index_coeff
+
+
+    def lc(self):
+        self_coeffs = self.getPolynomial2List()
+        for index_coefficient, coefficient in enumerate(self_coeffs):
+            if coefficient == 1:
+                leading_coefficient = coefficient
+        return leading_coefficient
+
 
     def div(self,g2):
-        pass
+        self_coeffs = self.getPolynomial2List()
+        g2_coeffs = g2.getPolynomial2List()
+        # Create q based on the highest power of the quotient
+        q = []
+        for i in range(len(self_coeffs) - len(g2_coeffs) + 1):
+            q.append(0)
+        q_obj = GF2N(self.getInt(q))  # Will be an empty list if the int value is 0
+        r = copy.deepcopy(self)
+        b = g2
+        d = g2.deg()
+        c = g2.lc()
+        while r.deg() >= d:
+            power = r.deg() - d
+            coeff_power = int(r.lc()/ c)
+            s = []
+            for i in range(power):
+                s.append(0)
+            s.append(coeff_power)
+            s = self.getInt(s)
+            q = GF2N(s).add(q_obj)
+            q_obj = q          
+            sb = GF2N(s, self.n, None).mul(b)
+            r = r.sub(sb)
+        return q, r
+
 
     def getPolynomial2(self):
-        pass
+        coeffs = self.getPolynomial2List()
+        poly = Polynomial2(coeffs)
+        return poly
 
+    
+    def getPolynomial2List(self):
+        coeffs = list(str(bin(self.x)).lstrip('0b'))
+        coeffs = [ int(x) for x in coeffs ]
+        #print(coeffs)
+        coeffs.reverse()
+        return coeffs
+
+        
     def __str__(self):
-        pass
+        return str(self.x)
+        # # Print based on an integer representation
+        # coeffs = self.getPolynomial2List()
+        # formatted_polynomial = ''
+        # coeffs.reverse()
+        # for index_coeff, indiv_coeff in enumerate(coeffs):
+        #     if index_coeff == len(coeffs) - 1:
+        #         if indiv_coeff == 1:
+        #             formatted_polynomial += 'x^{}'.format(0)
+        #         else:
+        #             formatted_polynomial = formatted_polynomial[: -1]
+        #     else:
+        #         if indiv_coeff == 1:
+        #             formatted_polynomial += 'x^{}+'.format(len(coeffs) - 1 - index_coeff)
+        # return formatted_polynomial
 
-    def getInt(self):
-        pass
+    def getInt(self, coefficients):
+        value = 0
+        for index_coeff, indiv_coeff in enumerate(coefficients):
+            value += indiv_coeff * 2 ** index_coeff
+        return value
 
     # def mulInv(self):
     #     pass
@@ -255,6 +448,7 @@ print ('g4 = {}'.format(g4.getPolynomial2()))
 print ('g5 = {}'.format(g5.getPolynomial2()))
 g6=g4.mul(g5)
 print ('g4 x g5 = {}'.format(g6.p))
+
 
 print ('\nTest 6')
 print ('======')
