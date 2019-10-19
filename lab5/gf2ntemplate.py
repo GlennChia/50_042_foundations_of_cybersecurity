@@ -461,6 +461,19 @@ print ('g7/g8 =')
 print ('q = {}'.format(q.getPolynomial2()))
 print ('r = {}'.format(r.getPolynomial2()))
 
+
+# print ('\nTest Submission test')
+# print ('======')
+# ip_glenn=Polynomial2([1,0,0,1,1])
+# print ('irreducible polynomial {}'.format(ip_glenn))
+# g_glenn1=GF2N(0b1101,4,ip_glenn)
+# g_glenn2=GF2N(0b110,4,ip_glenn)
+# print ('g_glenn1 = {}'.format(g_glenn1.getPolynomial2()))
+# print ('g_glenn2 = {}'.format(g_glenn2.getPolynomial2()))
+# g_glenn_result=g_glenn1.mul(g_glenn2)
+# print ('g_glenn1 x g_glenn2 = {}'.format(g_glenn_result.p))
+
+
 # print '\nTest 7'
 # print '======'
 # ip=Polynomial2([1,1,0,0,1])

@@ -27,10 +27,11 @@ for index, indiv_bit in enumerate(self._coeffs):
 
 - For this part we will use the test case to illustrate
   - p1 = x<sup>5</sup>+x<sup>2</sup>+x  
+  - p4 = x<sup>7</sup>+x<sup>4</sup>+x<sup>3</sup>+x<sup>2</sup>+x  
   - modp = x<sup>8</sup>+x<sup>7</sup>+x<sup>5</sup>+x<sup>4</sup>+1
 
 ```python
-print ('p1=x^5+x^2+x')
+print ('p1=x^5+x^2+x')  # self
 print ('p4=x^7+x^4+x^3+x^2+x')
 print ('modp=x^8+x^7+x^5+x^4+1')
 p1=Polynomial2([0,1,1,0,0,1])
@@ -74,13 +75,109 @@ The result is x<sup>7</sup>+x<sup>6</sup>+x<sup>4</sup>+x<sup>3</sup>
 
 ### 1.1.3 Division
 
-
+Essentially this one requires us to follow the formula as shown in the notes. No explanation required.
 
 ## 1.2 Galois field class
 
+### 1.2.1 Multiplication
 
+<u>**Code's test case**</u>
 
+<u>**VERSION 1**</u>
 
+For this part we will use the test case to illustrate
+
+- g4 = x<sup>3</sup>+x<sup>2</sup>+1  
+- g5 = x<sup>2</sup>+x
+- modp = x<sup>4</sup>+x+1
+
+```python
+ip=Polynomial2([1,1,0,0,1])
+print ('irreducible polynomial {}'.format(ip))
+g4=GF2N(0b1101,4,ip)  # 13 = [1, 0, 1, 1]
+g5=GF2N(0b110,4,ip)  # 6 = [0, 1, 1]
+print ('g4 = {}'.format(g4.getPolynomial2()))  # x^3+x^2+x^0
+print ('g5 = {}'.format(g5.getPolynomial2()))  # x^2+x^1
+g6=g4.mul(g5)
+print ('g4 x g5 = {}'.format(g6.p))
+```
+
+| Row  | Powers                        | Operation                         | New Result                    | Reduction | After reduction (XOR) |
+| ---- | ----------------------------- | --------------------------------- | ----------------------------- | --------- | --------------------- |
+| 1    | x<sup>0</sup> . g<sub>4</sub> |                                   | x<sup>3</sup>+x<sup>2</sup>+1 | N         |                       |
+| 2    | x<sup>1</sup> . g<sub>4</sub> | x . x<sup>3</sup>+x<sup>2</sup>+1 | x<sup>4</sup>+x<sup>3</sup>+x | Y         | x<sup>3</sup> + 1     |
+| 3    | x<sup>2</sup> . g<sub>4</sub> | x . x<sup>3</sup>+1               | x<sup>4</sup>+x               | Y         | 1                     |
+
+We then take the `After reduction` results associated with row 2, 3
+
+Result = (x<sup>3</sup> + 1) + (1)  = x<sup>3</sup>
+
+<u>**VERSION 2: Swap g4 and g5**</u>
+
+For this part we will use the test case to illustrate
+
+- g4 = x<sup>3</sup>+x<sup>2</sup>+1  
+- g5 = x<sup>2</sup>+x
+- modp = x<sup>4</sup>+x+1
+
+```python
+ip=Polynomial2([1,1,0,0,1])
+print ('irreducible polynomial {}'.format(ip))
+g4=GF2N(0b1101,4,ip)
+g5=GF2N(0b110,4,ip)
+print ('g4 = {}'.format(g4.getPolynomial2()))
+print ('g5 = {}'.format(g5.getPolynomial2()))
+g6=g5.mul(g4)  # Changed this part
+print ('g4 x g5 = {}'.format(g6.p))
+```
+
+| Row  | Powers                        | Operation                       | New Result                    | Reduction | After reduction (XOR) |
+| ---- | ----------------------------- | ------------------------------- | ----------------------------- | --------- | --------------------- |
+| 1    | x<sup>0</sup> . g<sub>5</sub> |                                 | x<sup>2</sup>+x               | N         |                       |
+| 2    | x<sup>1</sup> . g<sub>5</sub> | x . x<sup>2</sup>+x             | x<sup>3</sup>+x<sup>2</sup>   | N         |                       |
+| 3    | x<sup>2</sup> . g<sub>5</sub> | x . x<sup>3</sup>+x<sup>2</sup> | x<sup>4</sup>+x<sup>3</sup>   | Y         | x<sup>3</sup>+x+1     |
+| 4    | x<sup>3</sup> . g<sub>5</sub> | x. x<sup>3</sup>+x+1            | x<sup>4</sup>+x<sup>2</sup>+x | N         | x<sup>2</sup>+1       |
+
+We then take the `After reduction` results associated with row 1, 3, 4
+
+Result = (x<sup>2</sup>+x) + ( x<sup>3</sup>+x+1) + (x<sup>2</sup>+1) = x<sup>3</sup>
+
+<u>**Submission test case**</u>
+
+Create a table for addition and multiplication for GF(2<sup>4</sup>), using (x<sup>4</sup>+x<sup>3</sup>+1) as the modulus.
+
+For this test case we will use 
+
+- g4 = x<sup>3</sup>+x<sup>2</sup>+1  
+- g5 = x<sup>2</sup>+x
+
+| Row  | Powers                        | Operation                         | New Result                    | Reduction | After reduction (XOR) |
+| ---- | ----------------------------- | --------------------------------- | ----------------------------- | --------- | --------------------- |
+| 1    | x<sup>0</sup> . g<sub>4</sub> |                                   | x<sup>3</sup>+x<sup>2</sup>+1 | N         |                       |
+| 2    | x<sup>1</sup> . g<sub>4</sub> | x . x<sup>3</sup>+x<sup>2</sup>+1 | x<sup>4</sup>+x<sup>3</sup>+x | Y         | x + 1                 |
+| 3    | x<sup>2</sup> . g<sub>4</sub> | x . x+1                           | x<sup>2</sup>+x               | N         |                       |
+
+We then take the `After reduction` results associated with row 2, 3
+
+Result = (x<sup>2</sup> + x) + (x+1)  = x<sup>2</sup>+1
+
+Addition table
+
+|                   | x<sup>0</sup> | x<sup>1</sup> | x<sup>2</sup> | x<sup>3</sup> |
+| ----------------- | ------------- | ------------- | ------------- | ------------- |
+| x<sup>2</sup> + x | 0             | 1             | 1             | 0             |
+| x+1               | 1             | 1             | 0             | 0             |
+| Result            | 1             | 0             | 1             | 0             |
+
+### 1.2.2 Division
+
+The only problem I faced was an infinite loop because the subtraction and multiplication methods were setting the new object created to the default `n=8` and `ip=Polynomial2([1,1,0,1,1,0,0,0,1])` values. 
+
+To overcome this, when returning an object from the add, subtract, and multiplication methods, I had to set the `n` and `ip` values to the parents' values 
+
+```python
+GF2N(value, self.n, self.ip)
+```
 
 # Misc: Bug fixes
 
