@@ -30,6 +30,7 @@ Result = (x<sup>2</sup> + x) + (x+1)  = x<sup>2</sup>+1
 Result is x<sup>2</sup>+1
 
 <div style="page-break-after: always;"></div>
+
 # 2. Second example with a different GF(2<sup>n</sup>)
 
 For this part we will use the test case to illustrate
@@ -72,6 +73,7 @@ Doing the second addition
 The result is x<sup>7</sup>+x<sup>6</sup>+x<sup>4</sup>+x<sup>3</sup>
 
 <div style="page-break-after: always;"></div>
+
 # 3. Lab's test case
 
 ![](assets/test_case.PNG)
