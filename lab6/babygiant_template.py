@@ -72,12 +72,12 @@ if __name__=="__main__":
         guesskey2=primes_template.square_multiply(B,a,p)
         guesskey2 = pow(B,a,p)
     try:
-        print (f'Guess key 1: {guesskey1}')
+        print ('Guess key 1: {}'.format(guesskey1))
     except:
         pass
     try:
-        print (f'Guess key 2: {guesskey2}')
+        print ('Guess key 2: {}'.format(guesskey2))
     except: 
         pass
-    print (f'Actual shared key: {sharedkey}')
+    print ('Actual shared key: {}'.format(sharedkey))
 
