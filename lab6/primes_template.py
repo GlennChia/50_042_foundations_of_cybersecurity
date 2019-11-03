@@ -1,12 +1,13 @@
-#50.042 FCS Lab 6 template
+# 50.042 FCS Lab 6 template
+# Glenn Chia 1003118
 # Year 2019
 
 import random
 def square_multiply(a,x,n):
     y = 1
     n_b = str(bin(x)).lstrip('0b')
-    for i in range(len(n_b) - 1, -1, -1):
-        y = (y ** 2) % n
+    for i in range(len(n_b)):
+        y = (y * y) % n
         if n_b[i] == '1':
             y = (a * y) % n 
     return y
