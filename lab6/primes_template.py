@@ -26,12 +26,12 @@ def miller_rabin(n, a):
     # print(f'The value of r is {r}')
     for i in range(a):
         a = random.randint(2, n-2) 
-        x = (a ** d) % n
+        x = square_multiply(a, d, n) # (a ** d) % n
         if x == 1 or x == n-1:
             continue
         state = 0
         for j in range(r-1):
-            x = (x ** 2) % n
+            x = square_multiply(x, 2, n) # (x ** 2) % n
             if x == n-1:
                 state = 1
                 break
@@ -43,19 +43,10 @@ def miller_rabin(n, a):
 
 def gen_prime_nbits(n):
     # Max value of an n bit integer is 2^n - 1
-    # a = random.randint(2, 2**n -1)
-    # 100 and 80 bits takes too long. Instead we will constrain it to 20 bits and pad it to 100 and 80 bits respectively
-    a = random.randint(2, 2**20 -1)
-    # Comment the code below if we really want 100 and 80 bits
-    # a = random.randint(2, 2**n -1)
-    while miller_rabin(a, 2) == 'Probably not prime':
-        a = random.randint(2, 2**20 -1)
-    # convert to binary representration  
-    a_bin = str(bin(a)).lstrip('0b')
-    padding = n - len(a_bin)
-    pad_0 = '0' * padding
-    a_bin = pad_0 + a_bin
-    return a_bin # change this to a if we want the string representation
+    odd_num = 2 * random.randint(1, 2**(n - 1) - 1) + 1
+    while miller_rabin(odd_num, 2) == 'Probably not prime':
+        odd_num = 2 * random.randint(1, 2**(n - 1) - 1) + 1
+    return odd_num # change this to a if we want the string representation
 
 if __name__=="__main__":
     print(square_multiply(2,5,5))
