@@ -70,7 +70,6 @@ if __name__=="__main__":
         # guesskey1 = pow(A,b,p)
     if a != "none found":
         guesskey2=primes_template.square_multiply(B,a,p)
-        guesskey2 = pow(B,a,p)
     try:
         print ('Guess key 1: {}'.format(guesskey1))
     except:
