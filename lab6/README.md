@@ -44,13 +44,17 @@ With this random number generated we check if it is prime. If it is, we return i
 
 To speed up finding a prime number, we can first generate an n bit odd number with `2 * random.randint(1, 2**(n - 1) - 1) + 1`
 
+## 1.4 Result
+
+![](assets/01.PNG)
+
 # 2. Part II: Diffie-Hellman Key Exchange (DHKE)
 
 ## 2.1 Getting a prime number
 
 Go to http://www.wolframalpha.com/ and type `prime closest to 2^80` 
 
-![](assets/01.PNG)
+![](assets/02.PNG)
 
 - I get an integer `1208925819614629174706189`
 
@@ -65,6 +69,10 @@ The week 6 slides says the following
 - Announce g<sup>a</sup> mod p 
 - Attacker cannot find a from g<sup>a</sup> mod p 
 - Given finite cyclic group G of order p-1 and an element r, and a (multiplicative) generator element g
+
+## 2.2 Results
+
+![](assets/03.PNG)
 
 # 3. Part III: Baby-Step Giant-Step Method
 
@@ -86,7 +94,7 @@ If we rewrite the formula in the lab we are doing
 
 At the end we should compute the shared key when we get either private keys 
 
-![](assets/02.PNG)
+![](assets/04.PNG)
 
 # 4. Open ended questions
 
@@ -148,7 +156,7 @@ The steps we took are as follows
 
 The result of the exchange is as follows
 
-![](assets/03.PNG)
+![](assets/05.PNG)
 
 ## 4.2 What's the advantage and disadvantage of DHKE?  
 
@@ -178,3 +186,47 @@ When designing a system, we want to ensure that it provides confidentiality and 
 ## 4.3 Increase the number of bits to break slowly. To avoid attack using Baby-Step Giant-Steps method, how many bits should the key be in DHKE protocol?
 
 Baby-step-giant-steps aims to find the private keys. From the private keys, we then compute the shared key as the public key is known.
+
+The approach was this was to use the DHKE template code to generate different length of shared bits. A larger shared key would mean a naturally larger private key/public key to crack.
+
+I then used the baby-step giant-step code to break it and timed it 
+
+```python
+start_time = time.time()
+# Break the shared key here 
+a=baby_giant(alpha,A,p)
+sharedKeyGuess=primes_template.square_multiply(B,a,p)
+# Record the time taken
+elapsed_time = time.time() - start_time
+print(elapsed_time)
+```
+
+The results are as shown below
+
+![](assets/06.PNG)
+
+The plot of the results shows 
+
+![](assets/07.PNG)
+
+Using an equation formulator we can get a formula 
+
+> time = 6x10<sup>-5</sup>e<sup>0.4477key_length</sup>
+
+Manipulating the equation gives 
+
+> key_length = 2.233ln($\frac{time}{6.10^{-5}}$)
+
+If we want to make it secure for a day (maybe the client just needs to have a session with the server that lasts for a day)
+
+>  1 day = 86400 seconds
+>
+> Key_length = 47 bits
+
+If we want to make it secure enough (meaning that it will take decades to break, maybe 60 years)
+
+>  60 years = 1.892 x 10<sup>9</sup>seconds
+>
+> Key_length = 69 bits
+
+This makes sense because a larger p is chosen which in turn determines the size of m and the number of iterations of the for loop.
