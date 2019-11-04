@@ -6,16 +6,19 @@ import primes_template
 import random
 
 def dhke_setup(nb):
+    '''
+    Method 1: Using my own functions
+    '''
     # Generate an 80 bit prime number 
-    # large_prime = primes_template.gen_prime_nbits(nb)
+    p = primes_template.gen_prime_nbits(nb)
+    alpha = random.randint(2, p-2)
+    '''
+    Method 2: Using Wolfram Alpha's number
+    '''
     # Instead of using the function, I will use Wolframalpha to save computation time
     # https://www.wolframalpha.com/ prime closest to 2^80
-    p = 1208925819614629174706189
-    # random.seed(30)
+    # p = 1208925819614629174706189
     # alpha = random.randint(2, p-2)
-    # alpha is a generator of the group (But we don't have a group specified in the lab handout)
-    # alpha = random.randint(2, 50) # Choose a small value to make computations fast
-    alpha = 2
     return p, alpha
 
 def gen_priv_key(p):
