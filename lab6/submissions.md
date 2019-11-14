@@ -1,3 +1,7 @@
+# Glenn Chia 1003118
+
+50.042 Foundations of Cybersecurity Lab 6
+
 # 1. Open ended questions
 
 ## 1.1 Demo a key exchange using DHKE protocol
