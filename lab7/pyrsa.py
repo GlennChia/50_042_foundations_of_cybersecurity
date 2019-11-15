@@ -54,5 +54,14 @@ if __name__=="__main__":
     print('The signed hash is:\n{}\n'.format(b64encode(encrypted_hash)))
     decrypt_hash = decrypt_RSA('mykey.pem.priv', encrypted_hash)
     print('The original message after decrypting the hash:\n {}\n'.format(decrypt_hash))
-    
+    '''Part II: Protocol Attack'''
+    print('Part II-------------')
+    plain_int = 100
+    print('Encrypting: {}\n'.format(plain_int))
+    cipher_int = encrypt_RSA('mykey.pem.pub', plain_int)
+    print('Result:\n{}\n'.format(b64encode(cipher_int)))
+    attack_num = 2
+    cipher_attack = encrypt_RSA('mykey.pem.pub', attack_num)
+    cipher_modified = pyrsa_sq_mul.unpack_bigint(cipher_int) * pyrsa_sq_mul.unpack_bigint(cipher_attack)
+    print('Modified to: {}\n'.format(cipher_modified))
 
