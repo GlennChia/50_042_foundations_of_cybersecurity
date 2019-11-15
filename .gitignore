@@ -6,3 +6,4 @@ rainbowcrack-1.7-*
 rainbowcrack_archive
 __pycache__
 *.zip
+venv
