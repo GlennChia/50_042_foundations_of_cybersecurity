@@ -64,4 +64,6 @@ if __name__=="__main__":
     cipher_attack = encrypt_RSA('mykey.pem.pub', attack_num)
     cipher_modified = pyrsa_sq_mul.unpack_bigint(cipher_int) * pyrsa_sq_mul.unpack_bigint(cipher_attack)
     print('Modified to: {}\n'.format(cipher_modified))
+    decrypt_cipher_modified = decrypt_RSA('mykey.pem.priv', pyrsa_sq_mul.pack_bigint(cipher_modified))
+    print('Decrypted: {}'.format(b64encode(decrypt_cipher_modified)))
 
