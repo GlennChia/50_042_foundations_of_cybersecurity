@@ -68,3 +68,4 @@ encrypted_hash = encrypt_RSA('mykey.pem.pub', message_hash_digest.encode(encodin
 
 ## 3.2 Results
 
+![](assets/02_part2.PNG)
