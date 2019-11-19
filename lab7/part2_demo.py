@@ -70,8 +70,9 @@ def verify_sign(private_key_loc,sign,data):
     key = open(private_key_loc, 'r').read()
     rsakey = RSA.importKey(key)
     verifier = PKCS1_PSS.new(rsakey)
+    message_hash = SHA256.new(data)
     try:
-        verifier.verify(data, sign)
+        verifier.verify(message_hash, sign)
         return "The signature is authentic."
     except (ValueError, TypeError):
         return "The signature is not authentic."
@@ -90,7 +91,7 @@ if __name__=="__main__":
         '''
         print('I AM EVE FOR THIS ROUND\n')
         s = 100 #2019  # 111 11100011
-        x = encrypt_RSA('mykey.pem.pub', s)
+        x = encrypt_RSA('mykey.pem.pub', pyrsa_sq_mul.pack_bigint(s))
         print('Result of encryption with public key:\n{}\n'.format(x))
         print('Result of encryption with public key:\n{}\n'.format(b64encode(x)))
         # Send x length
@@ -100,7 +101,8 @@ if __name__=="__main__":
         sock.sendall(x)
         print('Sent new message x')
         # Send s
-        sock.sendall(s.to_bytes(128, 'big'))
+        sock.send(len(pyrsa_sq_mul.pack_bigint(s)).to_bytes(4, 'big'))
+        sock.sendall(pyrsa_sq_mul.pack_bigint(s))
         print('Sent signature s: {}'.format(s))
         # Receive acknowledgement from partner 
         ## Receive the length of the message
@@ -109,7 +111,7 @@ if __name__=="__main__":
         ## Receive message
         receive_message = sock.recv(receive_length)
         if receive_message == b'OK':
-            print('ATTACK SUCCESS')
+            print('ATTACK SUCCESS\n')
         else:
             print('ATTACK FAILED\n')
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
@@ -125,18 +127,82 @@ if __name__=="__main__":
         print('Receive x length: {}'.format(x_receive_length))
         x_receive = sock.recv(x_receive_length)
         print('Result of encryption with public key received:\n{}\n'.format(b64encode(x_receive)))
-        s_receive = sock.recv(128)
-        s_receive_raw = int.from_bytes(s_receive, 'big')
-        print('Received plain message:\n{}\n'.format(s_receive_raw))
-        x_receive_prime = encrypt_RSA('mykey.pem.pub', s_receive_raw)
+        s_receive_length = int.from_bytes(sock.recv(4), 'big')
+        print('The length of the s_received is: {}'.format(s_receive_length))
+        s_receive = sock.recv(s_receive_length)
+        # s_receive_raw = int.from_bytes(s_receive, 'big')
+        print('Received plain message:\n{}\n'.format(s_receive))
+        s_receive = int.from_bytes(s_receive, 'big')
+        s_receive = pyrsa_sq_mul.pack_bigint(s_receive)
+        x_receive_prime = encrypt_RSA('mykey.pem.pub', s_receive)
+        print('x prime is:\n{}\n'.format(b64encode(x_receive_prime)))
         print('x prime is:\n{}\n'.format(x_receive_prime))
         if x_receive == x_receive_prime:
             response_bob = 'OK'
-            print('ATTACK SUCCESS')
+            print('ATTACK SUCCESS\n')
         else:
             response_bob = 'ERR'
-            print('ATTACK FAILED')
+            print('ATTACK FAILED\n')
         sock.send(len(response_bob).to_bytes(4, 'big'))
         print('Sent length of response: {}'.format(len(response_bob).to_bytes(4, 'big')))
         sock.send(bytearray(response_bob, encoding='utf8'))
         print('Sent the response')
+    # with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+    #     sock.connect((HOST, PORT))
+    #     '''
+    #     For the first part I am Eve
+    #     I will impersonate Alice and send x (message), s (signature)
+    #     Bob already has Alice's public key, public key(e)
+    #     '''
+    #     print('I AM EVE FOR THIS ROUND\n')
+    #     s = 100 #2019  # 111 11100011
+    #     x = encrypt_RSA('mykey.pem.pub', s)
+    #     print('Result of encryption with public key:\n{}\n'.format(x))
+    #     print('Result of encryption with public key:\n{}\n'.format(b64encode(x)))
+    #     # Send x length
+    #     sock.send(len(x).to_bytes(4, 'big'))
+    #     print('Sent x length: {}'.format(len(x)))
+    #     # Send x
+    #     sock.sendall(x)
+    #     print('Sent new message x')
+    #     # Send s
+    #     sock.sendall(s.to_bytes(128, 'big'))
+    #     print('Sent signature s: {}'.format(s))
+    #     # Receive acknowledgement from partner 
+    #     ## Receive the length of the message
+    #     receive_length = int.from_bytes(sock.recv(4), 'big')
+    #     print('Received message length: {}'.format(receive_length))
+    #     ## Receive message
+    #     receive_message = sock.recv(receive_length)
+    #     if receive_message == b'OK':
+    #         print('ATTACK SUCCESS\n')
+    #     else:
+    #         print('ATTACK FAILED\n')
+    # with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+    #     sock.connect((HOST, PORT))
+    #     '''
+    #     For the second part I am Bob
+    #     I will receive x (message), s (signature)
+    #     I already has Alice's public key, public key(e)
+    #     '''
+    #     print('I AM BOB FOR THIS ROUND\n')
+    #     #x_receive_length = sock.recv(4)
+    #     x_receive_length = int.from_bytes(sock.recv(4), 'big')
+    #     print('Receive x length: {}'.format(x_receive_length))
+    #     x_receive = sock.recv(x_receive_length)
+    #     print('Result of encryption with public key received:\n{}\n'.format(b64encode(x_receive)))
+    #     s_receive = sock.recv(128)
+    #     s_receive_raw = int.from_bytes(s_receive, 'big')
+    #     print('Received plain message:\n{}\n'.format(s_receive_raw))
+    #     x_receive_prime = encrypt_RSA('mykey.pem.pub', s_receive_raw)
+    #     print('x prime is:\n{}\n'.format(x_receive_prime))
+    #     if x_receive == x_receive_prime:
+    #         response_bob = 'OK'
+    #         print('ATTACK SUCCESS')
+    #     else:
+    #         response_bob = 'ERR'
+    #         print('ATTACK FAILED')
+    #     sock.send(len(response_bob).to_bytes(4, 'big'))
+    #     print('Sent length of response: {}'.format(len(response_bob).to_bytes(4, 'big')))
+    #     sock.send(bytearray(response_bob, encoding='utf8'))
+    #     print('Sent the response')
