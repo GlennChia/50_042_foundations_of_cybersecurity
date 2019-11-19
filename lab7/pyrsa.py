@@ -69,8 +69,9 @@ def verify_sign(private_key_loc,sign,data):
     key = open(private_key_loc, 'r').read()
     rsakey = RSA.importKey(key)
     verifier = PKCS1_PSS.new(rsakey)
+    message_hash = SHA256.new(data)
     try:
-        verifier.verify(data, sign)
+        verifier.verify(message_hash, sign)
         return "The signature is authentic."
     except (ValueError, TypeError):
         return "The signature is not authentic."
@@ -122,8 +123,8 @@ if __name__=="__main__":
     # print('The public key is:\n{}\n'.format(part3_public_key))
     # print('The private key is:\n{}\n'.format(part3_private_key))
 
-    with open("mydata.txt") as f_message_data:
-        message_data = f_message_data.read().encode()
+    with open("mydata.txt", 'rb') as f_message_data:
+        message_data = f_message_data.read()
     print('The message to encrypt is:\n{}\n'.format(message_data))
 
     cipher_pkcs = encrypt_RSA('part3.pem.pub', message_data, 'part3')
@@ -135,4 +136,4 @@ if __name__=="__main__":
     signed_hash, hashed_message = sign_RSA('part3.pem.priv', message_data)
     print('The signed hash is:\n{}\n'.format(signed_hash))
 
-    print(verify_sign('part3.pem.pub', signed_hash, hashed_message))
+    print(verify_sign('part3.pem.pub', signed_hash, message_data))
