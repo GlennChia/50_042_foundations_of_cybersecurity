@@ -479,7 +479,7 @@ Take the $X$ from Step 4 and the $Y$ from Step 6 and concatenate them
 
 Result =  $X || Y$
 
-**Decrpytion**
+**Decryption**
 
 <u>Step 1</u>
 
