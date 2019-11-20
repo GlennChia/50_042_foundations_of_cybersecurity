@@ -119,9 +119,9 @@ if __name__=="__main__":
 
     '''Part III: Implementing RSA with Padding (Local testing)'''
     print('Part III-------------')
-    # part3_private_key, part3_public_key = generate_RSA()
-    # print('The public key is:\n{}\n'.format(part3_public_key))
-    # print('The private key is:\n{}\n'.format(part3_private_key))
+    part3_private_key, part3_public_key = generate_RSA()
+    print('The public key is:\n{}\n'.format(part3_public_key))
+    print('The private key is:\n{}\n'.format(part3_private_key))
 
     with open("mydata.txt", 'rb') as f_message_data:
         message_data = f_message_data.read()
