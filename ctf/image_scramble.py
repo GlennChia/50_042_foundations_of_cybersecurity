@@ -5,6 +5,20 @@ random.seed(1)
 random_sequence = random.sample(range(0, 8), 8)
 print(random_sequence)
 
+# Permutaion function retrieved from https://www.geeksforgeeks.org/generate-all-the-permutation-of-a-list-in-python/
+def permutation(lst): 
+    if len(lst) == 0: 
+        return [] 
+    if len(lst) == 1: 
+        return [lst] 
+    l = [] 
+    for i in range(len(lst)): 
+       m = lst[i] 
+       remLst = lst[:i] + lst[i+1:] 
+       for p in permutation(remLst): 
+           l.append([m] + p) 
+    return l 
+
 def image_to_bytes(image_path):
     with open(image_path, "rb") as image:
         str1 = base64.b64encode(image.read())
@@ -42,8 +56,8 @@ def bytes_to_image_brute_force(encrypt_path):
         fragments = []
         for i in range(8):
             fragments.append(original[len(original)*i:len(original) * (i + 1)])
-    for index, permutation in enumerate(permutations):
-        permutation_copy = permutation
+    for index, permutation_indiv in enumerate(permutations):
+        permutation_copy = permutation_indiv
         fragmented = b''
         while random_sequence != []:
             value = permutation_copy.index(min(permutation_copy))
@@ -55,19 +69,6 @@ def bytes_to_image_brute_force(encrypt_path):
             text.write(str1)
     return True
 
-# PPermutaion function retrieved from https://www.geeksforgeeks.org/generate-all-the-permutation-of-a-list-in-python/
-def permutation(lst): 
-    if len(lst) == 0: 
-        return [] 
-    if len(lst) == 1: 
-        return [lst] 
-    l = [] 
-    for i in range(len(lst)): 
-       m = lst[i] 
-       remLst = lst[:i] + lst[i+1:] 
-       for p in permutation(remLst): 
-           l.append([m] + p) 
-    return l 
   
 image_to_bytes('raw_hash.PNG')
 bytes_to_image('encrypt.txt')
